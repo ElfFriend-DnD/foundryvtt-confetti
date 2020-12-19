@@ -1,33 +1,45 @@
 {
   "name": "foundryvtt-confetti",
-  "title": "foundryvtt-confetti",
-  "description": "",
-  "systems": [],
+  "title": "Confetti",
+  "description": "Everyone loves confetti.",
   "version": "0.1.0",
-  "author": "",
+  "author": "Andrew Krigline (akrigline)",
   "authors": [
     {
-      "name": "",
-      "email": "",
-      "url": ""
+      "name": "Andrew Krigline",
+      "discord": "Calego#0914",
+      "url": "https://github.com/ElfFriend-DnD"
     }
   ],
-  "scripts": [],
   "esmodules": [
     "foundryvtt-confetti.js"
   ],
   "styles": [
     "foundryvtt-confetti.css"
   ],
-  "packs": [],
-  "languages": [],
-  "minimumCoreVersion": "0.5.0",
-  "compatibleCoreVersion": "0.5.0",
-  "url": "",
-  "manifest": "",
-  "download": "",
-  "license": "",
-  "readme": "",
-  "bugs": "",
-  "changelog": ""
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "minimumCoreVersion": "0.7.9",
+  "compatibleCoreVersion": "0.7.9",
+  "media": [
+    {
+      "type": "cover",
+      "link": "https://raw.githubusercontent.com/ElfFriend-DnD/foundryvtt-gmScreen/master/readme-img/cover-image.png"
+    },
+    {
+      "type": "screenshot",
+      "link": "https://raw.githubusercontent.com/ElfFriend-DnD/foundryvtt-gmScreen/master/readme-img/dnd5e-demo.jpg"
+    }
+  ],
+  "bugs": "https://github.com/ElfFriend-DnD/foundryvtt-confetti/issues",
+  "changelog": "https://github.com/ElfFriend-DnD/foundryvtt-confetti/releases",
+  "download": "https://github.com/ElfFriend-DnD/foundryvtt-confetti/releases/download/v1.2.0/module.zip",
+  "manifest": "https://github.com/ElfFriend-DnD/foundryvtt-confetti/releases/latest/download/module.json",
+  "readme": "https://raw.githubusercontent.com/ElfFriend-DnD/foundryvtt-confetti/main/README.md",
+  "url": "https://github.com/ElfFriend-DnD/foundryvtt-confetti"
 }
