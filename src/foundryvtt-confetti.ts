@@ -39,6 +39,10 @@ Hooks.once('ready', function () {
   confettiInstance = new Confetti();
 });
 
+Hooks.on('sidebarCollapse', () => {
+  confettiInstance.resizeConfettiCanvas();
+});
+
 /**
  * Add confetti buttons after the chat-form element.
  *

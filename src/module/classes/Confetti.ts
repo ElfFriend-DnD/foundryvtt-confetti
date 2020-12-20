@@ -40,22 +40,12 @@ type Sprite = {
  * Main class to handle ~~3D Dice~~ Confetti animations.
  */
 export class Confetti {
-  canvas: JQuery<HTMLCanvasElement>;
+  confettiCanvas: JQuery<HTMLCanvasElement>;
   confettiSprites: Record<string, Sprite>;
   ctx: CanvasRenderingContext2D;
   dpr: number;
-
-  static get DEFAULT_OPTIONS() {
-    return {
-      enabled: true,
-      sounds: true,
-      soundsVolume: 0.5,
-    };
-  }
-
-  static CONFIG() {
-    return mergeObject(Confetti.DEFAULT_OPTIONS, game.settings.get(MODULE_ID, 'settings'));
-  }
+  _rtime: Date; // used to keep track of resize
+  _timeout: boolean; // used in resize
 
   /**
    * Create and initialize a new Confetti.
@@ -70,13 +60,69 @@ export class Confetti {
     game.audio.pending.push(this._preloadSounds.bind(this));
 
     window[MODULE_ID] = {
-      handleShootConfetti: this.handleShootConfetti,
-      shootConfetti: this.shootConfetti,
+      confettiStrength: ConfettiStrength,
       getShootConfettiProps: Confetti.getShootConfettiProps,
+      handleShootConfetti: this.handleShootConfetti.bind(this),
+      shootConfetti: this.shootConfetti.bind(this),
     };
     Hooks.call(`${MODULE_ID}Ready`, this);
   }
 
+  /**
+   * Create and inject the confetti canvas.
+   *
+   * @private
+   */
+  _buildCanvas() {
+    this.confettiCanvas = $(
+      '<canvas id="confetti-canvas" style="position: absolute; left: 0; top: 0;pointer-events: none;">'
+    );
+    this.confettiCanvas.css('z-index', 2000);
+    this.confettiCanvas.appendTo($('body'));
+
+    log(false, {
+      dpr: this.dpr,
+      confettiCanvas: this.confettiCanvas,
+      canvasDims: {
+        width: this.confettiCanvas.width(),
+        height: this.confettiCanvas.height(),
+      },
+    });
+
+    this.resizeConfettiCanvas();
+
+    this.ctx = this.confettiCanvas[0].getContext('2d');
+  }
+
+  /**
+   * Init listeners on windows resize and socket.
+   *
+   * @private
+   */
+  _initListeners() {
+    game.socket.on(`module.${MODULE_ID}`, (request: { data: ShootConfettiProps }) => {
+      log(false, 'got socket connection', {
+        request,
+      });
+      this.handleShootConfetti(request.data);
+    });
+
+    this._rtime;
+    this._timeout = false;
+
+    $(window).on('resize', () => {
+      log(false, 'RESIIIIIIZING');
+      this._rtime = new Date();
+      if (this._timeout === false) {
+        this._timeout = true;
+        setTimeout(this._resizeEnd.bind(this), 1000);
+      }
+    });
+  }
+
+  /**
+   * Preload sounds so they're ready to play
+   */
   _preloadSounds() {
     return Object.values(SOUNDS).map((soundPath) => () =>
       AudioHelper.play(
@@ -92,57 +138,36 @@ export class Confetti {
   }
 
   /**
-   * Create and inject the confetti canvas resizing to the window total size.
+   * Resize to the window total size.
    *
-   * @private
    */
-  _buildCanvas() {
+  resizeConfettiCanvas() {
     const sidebarWidth = $('#sidebar').width();
-    this.canvas = $('<canvas id="confetti-canvas" style="position: absolute; left: 0; top: 0;pointer-events: none;">');
-    this.canvas.css('z-index', 2000);
-    this.canvas.appendTo($('body'));
-
     const width = window.innerWidth - sidebarWidth * this.dpr;
     const height = window.innerHeight * this.dpr;
-
     // set all the heights and widths
-    this.canvas.width(window.innerWidth - sidebarWidth + 'px');
-    this.canvas.height(window.innerHeight - 1 + 'px');
-    this.canvas[0].width = width * this.dpr;
-    this.canvas[0].height = height * this.dpr;
+    this.confettiCanvas.width(window.innerWidth - sidebarWidth + 'px');
+    this.confettiCanvas.height(window.innerHeight - 1 + 'px');
+    this.confettiCanvas[0].width = width * this.dpr;
+    this.confettiCanvas[0].height = height * this.dpr;
+  }
 
-    log(false, {
-      dpr: this.dpr,
-      canvas: this.canvas,
-      canvasDims: {
-        width: this.canvas.width(),
-        height: this.canvas.height(),
-      },
-    });
-
-    this.ctx = this.canvas[0].getContext('2d');
-
-    this.ctx.beginPath();
-    this.ctx.lineWidth = 6;
-    this.ctx.strokeStyle = 'red';
-    this.ctx.rect(this.canvas.width() / 2, this.canvas.height() / 2, 150, 100);
-    this.ctx.stroke();
+  _resizeEnd() {
+    if (new Date().getTime() - this._rtime.getTime() < 1000) {
+      setTimeout(this._resizeEnd.bind(this), 1000);
+    } else {
+      log(false, 'resize probably ended');
+      this._timeout = false;
+      //resize ended probably, lets resize the canvas dimensions
+      this.resizeConfettiCanvas();
+    }
   }
 
   /**
-   * Init listeners on windows resize and on click if auto hide has been disabled within the settings.
+   * Adds a given number of confetti particles and kicks off the tweening magic
    *
-   * @private
+   * @param {AddConfettiParticleProps} confettiParticleProps
    */
-  _initListeners() {
-    game.socket.on(`module.${MODULE_ID}`, (request: { data: ShootConfettiProps }) => {
-      log(false, 'got socket connection', {
-        request,
-      });
-      this.handleShootConfetti(request.data);
-    });
-  }
-
   addConfettiParticles({ amount, angle, velocity, sourceX, sourceY }: AddConfettiParticleProps) {
     log(false, {});
     let i = 0;
@@ -189,67 +214,17 @@ export class Confetti {
     }
   }
 
-  tweenConfettiParticle(spriteId: string) {
-    const minAngle = this.confettiSprites[spriteId].angle - SPREAD / 2;
-    const maxAngle = this.confettiSprites[spriteId].angle + SPREAD / 2;
-
-    const minVelocity = this.confettiSprites[spriteId].velocity / 4;
-    const maxVelocity = this.confettiSprites[spriteId].velocity;
-
-    // Physics Props
-    const velocity = random(minVelocity, maxVelocity);
-    const angle = random(minAngle, maxAngle);
-    const gravity = GRAVITY;
-    // const friction = random(0.1, 0.25);
-    const friction = random(0.01, 0.05);
-    const d = 0;
-
-    TweenLite.to(this.confettiSprites[spriteId], DECAY, {
-      physics2D: {
-        velocity,
-        angle,
-        gravity,
-        friction,
-      },
-      d,
-      ease: Power4.easeIn,
-      onComplete: () => {
-        // remove confetti sprite and id
-        delete this.confettiSprites[spriteId];
-
-        log(false, 'tween complete', {
-          spriteId,
-          confettiSprites: this.confettiSprites,
-        });
-
-        if (Object.keys(this.confettiSprites).length === 0) {
-          log(false, 'all tweens complete');
-          this.clearConfetti();
-          canvas.app.ticker.remove(this.render, this);
-        }
-      },
-    });
-  }
-
-  // randomize the confetti particle for the next frame
-  updateConfettiParticle(spriteId: string) {
-    const sprite = this.confettiSprites[spriteId];
-
-    const tiltAngle = 0.0005 * sprite.d;
-
-    sprite.angle += 0.01;
-    sprite.tiltAngle += tiltAngle;
-    sprite.tiltAngle += sprite.tiltAngleIncremental;
-    sprite.tilt = Math.sin(sprite.tiltAngle - sprite.r / 2) * sprite.r * 2;
-    sprite.y += Math.sin(sprite.angle + sprite.r / 2) * 2;
-    sprite.x += Math.cos(sprite.angle) / 2;
-  }
-
+  /**
+   * Clear the confettiCanvas
+   */
   clearConfetti() {
     log(false, 'clearConfetti');
-    this.ctx.clearRect(0, 0, this.canvas[0].width, this.canvas[0].height);
+    this.ctx.clearRect(0, 0, this.confettiCanvas[0].width, this.confettiCanvas[0].height);
   }
 
+  /**
+   * Draw a frame of the animation.
+   */
   drawConfetti() {
     log(false, 'drawConfetti');
     // map over the confetti sprites
@@ -265,18 +240,6 @@ export class Confetti {
 
       this.updateConfettiParticle(spriteId);
     });
-  }
-
-  render() {
-    log(false, 'render', {
-      ctx: this.ctx,
-    });
-
-    // first clear the board
-    this.clearConfetti();
-
-    // draw the sprites
-    this.drawConfetti();
   }
 
   /**
@@ -327,23 +290,39 @@ export class Confetti {
 
     // bottom left
     this.addConfettiParticles({
-      ...shootConfettiProps,
       angle: -80,
       sourceX: 0,
-      sourceY: this.canvas.height(),
+      sourceY: this.confettiCanvas.height(),
+      ...shootConfettiProps,
     });
 
     // bottom right
     this.addConfettiParticles({
-      ...shootConfettiProps,
       angle: -100,
-      sourceX: this.canvas.width(),
-      sourceY: this.canvas.height(),
+      sourceX: this.confettiCanvas.width(),
+      sourceY: this.confettiCanvas.height(),
+      ...shootConfettiProps,
     });
   }
 
   /**
+   * Clear the old frame and render a new one.
+   */
+  render() {
+    log(false, 'render', {
+      ctx: this.ctx,
+    });
+
+    // first clear the board
+    this.clearConfetti();
+
+    // draw the sprites
+    this.drawConfetti();
+  }
+
+  /**
    * Emit a socket message to all users with the ShootConfettiProps
+   * Also fire confetti on this screen
    * @param {ShootConfettiProps} shootConfettiProps
    */
   shootConfetti(shootConfettiProps: ShootConfettiProps) {
@@ -357,5 +336,71 @@ export class Confetti {
     this.handleShootConfetti(socketProps.data);
 
     game.socket.emit(`module.${MODULE_ID}`, socketProps);
+  }
+
+  /**
+   * GSAP Magic. Does things involving gravity, velocity, and other forces a mere
+   * mortal cannot hope to understand.
+   * Taken pretty directly from: https://codepen.io/elifitch/pen/apxxVL
+   *
+   * @param spriteId
+   */
+  tweenConfettiParticle(spriteId: string) {
+    const minAngle = this.confettiSprites[spriteId].angle - SPREAD / 2;
+    const maxAngle = this.confettiSprites[spriteId].angle + SPREAD / 2;
+
+    const minVelocity = this.confettiSprites[spriteId].velocity / 4;
+    const maxVelocity = this.confettiSprites[spriteId].velocity;
+
+    // Physics Props
+    const velocity = random(minVelocity, maxVelocity);
+    const angle = random(minAngle, maxAngle);
+    const gravity = GRAVITY;
+    // const friction = random(0.1, 0.25);
+    const friction = random(0.01, 0.05);
+    const d = 0;
+
+    TweenLite.to(this.confettiSprites[spriteId], DECAY, {
+      physics2D: {
+        velocity,
+        angle,
+        gravity,
+        friction,
+      },
+      d,
+      ease: Power4.easeIn,
+      onComplete: () => {
+        // remove confetti sprite and id
+        delete this.confettiSprites[spriteId];
+
+        log(false, 'tween complete', {
+          spriteId,
+          confettiSprites: this.confettiSprites,
+        });
+
+        if (Object.keys(this.confettiSprites).length === 0) {
+          log(false, 'all tweens complete');
+          this.clearConfetti();
+          canvas.app.ticker.remove(this.render, this);
+        }
+      },
+    });
+  }
+
+  /**
+   * Randomize a given sprite for the next frame
+   * @param spriteId
+   */
+  updateConfettiParticle(spriteId: string) {
+    const sprite = this.confettiSprites[spriteId];
+
+    const tiltAngle = 0.0005 * sprite.d;
+
+    sprite.angle += 0.01;
+    sprite.tiltAngle += tiltAngle;
+    sprite.tiltAngle += sprite.tiltAngleIncremental;
+    sprite.tilt = Math.sin(sprite.tiltAngle - sprite.r / 2) * sprite.r * 2;
+    sprite.y += Math.sin(sprite.angle + sprite.r / 2) * 2;
+    sprite.x += Math.cos(sprite.angle) / 2;
   }
 }

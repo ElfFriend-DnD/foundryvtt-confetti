@@ -17,7 +17,7 @@ Everyone loves Confetti.
 - [x] Add a sound effect to the confetti effects
 - [x] Add an API to window so other modules can trigger confetti effects
 - [ ] Add some configuration effects to prevent crashing potato computers
-- [ ] Documentation including JSDoc on stuff
+- [x] Documentation including JSDoc on stuff
 
 ## Installation
 
@@ -41,10 +41,53 @@ https://github.com/ElfFriend-DnD/foundryvtt-confetti/releases/latest/download/mo
 
 Its confetti! What do you mean it got everywhere and is messing something up? What did you expect to happen?
 
+## API
+
+After the hook `confettiReady` is fired, the following api methods are expected to be on `window.confetti`:
+
+### `confettiStrength`
+a typescript enum:
+```ts
+enum ConfettiStrength {
+  'low' = 0,
+  'med' = 1,
+  'high' = 2,
+}
+```
+
+### `getShootConfettiProps(strength: ConfettiStrength)`
+
+Returns the properties that `handleShootConfetti` and `shootConfetti` use based on the strength you feed it.
+
+### `handleShootConfetti(shootConfettiProps: ShootConfettiProps)`
+
+Makes the appropriate amount of confetti fire on only the current user's screen.
+
+### `shootConfetti(shootConfettiProps: ShootConfettiProps)`
+
+Makes the appropriate amount of confetti fire on all clients' screens.
+
+### Example:
+
+```ts
+function makeConfetti() {
+  const strength = window.confetti.confettiStrength.low;
+  const shootConfettiProps = window.confetti.getShootConfettiProps(strength);
+
+  if (isSecretCelebration) {
+    // I only want this to happen on my user's screen
+    window.confetti.handleShootConfetti(shootConfettiProps);
+  } else {
+    // I want confetti on all connected users' screens
+    window.confetti.shootConfetti(shootConfettiProps);
+  }
+}
+```
+
 
 ## Known Issues
 
-- This module does not, in fact, exist yet.
+- Yes, if you spam the shit out of the confetti buttons it will get everywhere and probably crash a computer. It _is_ confetti after all.
 
 ## Acknowledgements
 Sound Effects from [Zapsplat.com](https://www.zapsplat.com/).
