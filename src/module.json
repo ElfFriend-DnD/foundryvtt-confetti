@@ -20,6 +20,15 @@
       "path": "lang/en.json"
     }
   ],
+  "packs": [
+    {
+      "name": "confetti-macros",
+      "label": "Confetti Macros",
+      "path": "assets/packs/features.db",
+      "entity": "Macro",
+      "module": "confetti"
+    }
+  ],
   "minimumCoreVersion": "0.7.9",
   "compatibleCoreVersion": "0.7.9",
   "socket": true,

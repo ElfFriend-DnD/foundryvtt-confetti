@@ -16,7 +16,13 @@ Everyone loves Confetti.
 - [x] Hook up a socket to trigger the effect on all clients
 - [x] Add a sound effect to the confetti effects
 - [x] Add an API to window so other modules can trigger confetti effects
-- [ ] Add some configuration effects to prevent crashing potato computers
+- [x] Add some configuration effects to prevent crashing potato computers
+  - [x] GM Only :sadface: -- Only GMs get the buttons
+  - [x] "Confetti Multiplier Slider"  of how much confetti you want on screen (i.e. how much can your PC handle)
+  - [x] Mute?
+- [ ] Pull the buttons somewhere else... Naked Application?
+- [x] Localization -- Emoji are Universal
+- [x] Macro Compendium to Include
 - [x] Documentation including JSDoc on stuff
 
 ## Installation
@@ -33,9 +39,11 @@ https://github.com/ElfFriend-DnD/foundryvtt-confetti/releases/latest/download/mo
 
 ## Configuration
 
-| **Name** | Description |
-| -------- | ----------- |
-|          |             |
+| **Name**            | Description                                                                                                                                       |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| GM Only             | If you're a GM who absolutely hates letting your players have nice things, you'll enable this and remove the confetti buttons from their screens. |
+| Confetti Multiplier | How much confetti is too much? We let you decide, personally I think the answer is 'as much as you can handle'.                                   |
+| Mute                | If _you_ think those sounds are annoying, imagine being the guy writing this thing.                                                               |
 
 ## Compatibility
 
@@ -88,6 +96,7 @@ function makeConfetti() {
 ## Known Issues
 
 - Yes, if you spam the shit out of the confetti buttons it will get everywhere and probably crash a computer. It _is_ confetti after all.
+- Yes, if you set the Confetti Multiplier to 10, you _will_ have a bad time. Or maybe a great time, depends how much you're willing to trade for your confetti.
 
 ## Acknowledgements
 Sound Effects from [Zapsplat.com](https://www.zapsplat.com/).

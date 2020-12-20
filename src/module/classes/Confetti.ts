@@ -1,11 +1,11 @@
-import { ConfettiStrength, MODULE_ID, SOUNDS } from '../constants';
+import { ConfettiStrength, MODULE_ID, MySettings, SOUNDS } from '../constants';
 import { log, random } from '../helpers';
 //@ts-ignore
 import { gsap, TweenLite, Power4, Physics2DPlugin } from '/scripts/greensock/esm/all.js';
 //@ts-ignore
 gsap.registerPlugin(Physics2DPlugin);
 
-const DECAY = 4;
+const DECAY = 3;
 const SPREAD = 50;
 const GRAVITY = 1200;
 
@@ -142,11 +142,10 @@ export class Confetti {
    *
    */
   resizeConfettiCanvas() {
-    const sidebarWidth = $('#sidebar').width();
-    const width = window.innerWidth - sidebarWidth * this.dpr;
+    const width = window.innerWidth * this.dpr;
     const height = window.innerHeight * this.dpr;
     // set all the heights and widths
-    this.confettiCanvas.width(window.innerWidth - sidebarWidth + 'px');
+    this.confettiCanvas.width(window.innerWidth + 'px');
     this.confettiCanvas.height(window.innerHeight - 1 + 'px');
     this.confettiCanvas[0].width = width * this.dpr;
     this.confettiCanvas[0].height = height * this.dpr;
@@ -278,19 +277,25 @@ export class Confetti {
    * Fires Confetti on the Local instance of Confetti
    * @param {ShootConfettiProps} shootConfettiProps
    */
-  handleShootConfetti(shootConfettiProps: ShootConfettiProps) {
+  handleShootConfetti({ amount, ...shootConfettiProps }: ShootConfettiProps) {
     log(false, 'handleShootConfetti', {
       shootConfettiProps,
       ticker: canvas.app.ticker.count,
     });
 
+    const confettiMultiplier = game.settings.get(MODULE_ID, MySettings.ConfettiMultiplier);
+    const mute = game.settings.get(MODULE_ID, MySettings.Mute);
+
     canvas.app.ticker.add(this.render, this);
 
-    AudioHelper.play({ src: shootConfettiProps.sound, volume: 0.8, autoplay: true, loop: false }, true);
+    if (!mute) {
+      AudioHelper.play({ src: shootConfettiProps.sound, volume: 0.8, autoplay: true, loop: false }, true);
+    }
 
     // bottom left
     this.addConfettiParticles({
-      angle: -80,
+      amount: amount * confettiMultiplier,
+      angle: -70,
       sourceX: 0,
       sourceY: this.confettiCanvas.height(),
       ...shootConfettiProps,
@@ -298,8 +303,9 @@ export class Confetti {
 
     // bottom right
     this.addConfettiParticles({
-      angle: -100,
-      sourceX: this.confettiCanvas.width(),
+      amount: amount * confettiMultiplier,
+      angle: -110,
+      sourceX: this.confettiCanvas.width() - $('#sidebar').width(),
       sourceY: this.confettiCanvas.height(),
       ...shootConfettiProps,
     });

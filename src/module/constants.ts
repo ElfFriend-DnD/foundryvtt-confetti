@@ -17,5 +17,10 @@ export const SOUNDS = {
   [ConfettiStrength.high]: `modules/${MODULE_ID}/assets/sounds/food_drink_champagne_cork_pop_pour.mp3`,
 };
 
-export enum MySettings {}
+export enum MySettings {
+  GmOnly = 'gm-only',
+  ConfettiMultiplier = 'confetti-multiplier',
+  Mute = 'mute',
+}
+
 export enum MyFlags {}

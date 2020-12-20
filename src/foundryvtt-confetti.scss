@@ -1,8 +1,75 @@
 @import './styles/variables.scss';
 @import './styles/mixins.scss';
 
+$shadow-size: 0.4em;
+
 .confetti-buttons {
   @include spaced;
-  
+
   flex: 0 0 auto;
+  flex-wrap: nowrap;
+  font-size: 2em;
+  height: 1.8em;
+  line-height: 1;
+  align-items: center;
+  overflow: hidden;
+  position: fixed;
+  right: 305px; // sidebar width
+  top: calc(100% - 130px); // chatbox height
+  width: 1em;
+  min-width: 1em;
+  transition: min-width 300ms;
+
+  &:hover {
+    // width: 1em;
+    min-width: 190px;
+  }
+
+  button {
+    background: none;
+    border: 0;
+    flex: 0 0 auto;
+    font-size: inherit;
+    min-width: 0;
+    padding: 0;
+    width: auto;
+    line-height: 1;
+    width: auto;
+
+    &:hover,
+    &:focus {
+      border: 0;
+      outline: 0;
+      box-shadow: none;
+      text-shadow: 0 0 $shadow-size red;
+    }
+
+    &:hover {
+      animation: color-rainbow infinite 1500ms;
+    }
+  }
+
+  @keyframes color-rainbow {
+    0% {
+      text-shadow: 0 0 $shadow-size red;
+    }
+    16% {
+      text-shadow: 0 0 $shadow-size orange;
+    }
+    32% {
+      text-shadow: 0 0 $shadow-size yellow;
+    }
+    48% {
+      text-shadow: 0 0 $shadow-size green;
+    }
+    66% {
+      text-shadow: 0 0 $shadow-size blue;
+    }
+    82% {
+      text-shadow: 0 0 $shadow-size violet;
+    }
+    100% {
+      text-shadow: 0 0 $shadow-size red;
+    }
+  }
 }

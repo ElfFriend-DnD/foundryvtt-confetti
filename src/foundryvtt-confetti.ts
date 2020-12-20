@@ -1,8 +1,8 @@
 // Import TypeScript modules
-import { MODULE_ABBREV, MODULE_ID, MySettings, TEMPLATES, ConfettiStrength } from './module/constants';
+import { MODULE_ID, MySettings, TEMPLATES, ConfettiStrength } from './module/constants';
 import { registerSettings } from './module/settings.js';
 import { log } from './module/helpers';
-import { Confetti, ShootConfettiProps } from './module/classes/Confetti';
+import { Confetti } from './module/classes/Confetti';
 
 let confettiInstance: Confetti | undefined;
 
@@ -74,5 +74,8 @@ async function _addConfettiButtons(html: JQuery<HTMLElement>) {
 }
 
 Hooks.on('renderChatLog', (app: any, html: JQuery<HTMLElement>) => {
-  _addConfettiButtons(html);
+  const gmOnly = game.settings.get(MODULE_ID, MySettings.GmOnly);
+  if (gmOnly && game.user.isGM) {
+    _addConfettiButtons(html);
+  }
 });
