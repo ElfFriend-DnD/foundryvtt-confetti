@@ -35,11 +35,19 @@
   "media": [
     {
       "type": "cover",
-      "link": "https://raw.githubusercontent.com/ElfFriend-DnD/foundryvtt-gmScreen/master/readme-img/cover-image.png"
+      "link": "https://raw.githubusercontent.com/ElfFriend-DnD/foundryvtt-confetti/master/readme-img/cover-image.png"
     },
     {
       "type": "screenshot",
-      "link": "https://raw.githubusercontent.com/ElfFriend-DnD/foundryvtt-gmScreen/master/readme-img/dnd5e-demo.jpg"
+      "link": "https://raw.githubusercontent.com/ElfFriend-DnD/foundryvtt-confetti/master/readme-img/confetti-popped.jpg"
+    },
+    {
+      "type": "screenshot",
+      "link": "https://raw.githubusercontent.com/ElfFriend-DnD/foundryvtt-confetti/master/readme-img/confetti-menu.jpg"
+    },
+    {
+      "type": "screenshot",
+      "link": "https://raw.githubusercontent.com/ElfFriend-DnD/foundryvtt-confetti/master/readme-img/confetti-demo.gif"
     }
   ],
   "bugs": "https://github.com/ElfFriend-DnD/foundryvtt-confetti/issues",

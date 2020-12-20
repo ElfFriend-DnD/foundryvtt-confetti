@@ -8,23 +8,6 @@
 
 Everyone loves Confetti.
 
-## TO DO
-- [x] Create buttons on the UI for the Confetti
-- [x] Add our own canvas for GSAP Confetti -- Steal from DSN
-- [x] Create confetti effects (GSAP)
-  - Objective: Two blasts of confetti from the bottom left and right corners of the screen, three levels of "blast" and sound: Low, Med, High.
-- [x] Hook up a socket to trigger the effect on all clients
-- [x] Add a sound effect to the confetti effects
-- [x] Add an API to window so other modules can trigger confetti effects
-- [x] Add some configuration effects to prevent crashing potato computers
-  - [x] GM Only :sadface: -- Only GMs get the buttons
-  - [x] "Confetti Multiplier Slider"  of how much confetti you want on screen (i.e. how much can your PC handle)
-  - [x] Mute?
-- [ ] Pull the buttons somewhere else... Naked Application?
-- [x] Localization -- Emoji are Universal
-- [x] Macro Compendium to Include
-- [x] Documentation including JSDoc on stuff
-
 ## Installation
 
 Module JSON:
@@ -35,7 +18,7 @@ https://github.com/ElfFriend-DnD/foundryvtt-confetti/releases/latest/download/mo
 
 ## Screenshots
 
-![Demonstration of the Confetti.](readme-img/confetti-demo.jpg)
+![Demonstration of the Confetti.](readme-img/cover-image.png)
 
 ## Configuration
 
