@@ -22,6 +22,12 @@ type Sprite = {
   tiltAngle: number;
 };
 
+export enum ConfettiStrength {
+  'low' = 0,
+  'med' = 1,
+  'high' = 2,
+}
+
 /**
  * Stolen right from Dice so Nice
  * https://gitlab.com/riccisi/foundryvtt-dice-so-nice/-/blob/master/module/main.js
@@ -201,12 +207,14 @@ export class Confetti {
 
         if (Object.keys(this.confettiSprites).length === 0) {
           log(false, 'all tweens complete');
+          this.clearConfetti();
           canvas.app.ticker.remove(this.render, this);
         }
       },
     });
   }
 
+  // randomize the confetti particle for the next frame
   updateConfettiParticle(spriteId: string) {
     const sprite = this.confettiSprites[spriteId];
 
@@ -220,8 +228,14 @@ export class Confetti {
     sprite.x += Math.cos(sprite.angle) / 2;
   }
 
+  clearConfetti() {
+    log(false, 'clearConfetti');
+    this.ctx.clearRect(0, 0, this.canvas[0].width, this.canvas[0].height);
+  }
+
   drawConfetti() {
     log(false, 'drawConfetti');
+    // map over the confetti sprites
     Object.keys(this.confettiSprites).map((spriteId) => {
       const sprite = this.confettiSprites[spriteId];
 
@@ -241,35 +255,52 @@ export class Confetti {
       ctx: this.ctx,
     });
 
-    this.ctx.clearRect(0, 0, this.canvas[0].width, this.canvas[0].height);
+    // first clear the board
+    this.clearConfetti();
 
+    // draw the sprites
     this.drawConfetti();
   }
 
   /**
    * use canvas.app.ticker instance from PIXI instead of our own requestAnimationFrame
    */
-  shootConfetti() {
+  shootConfetti({ strength }: { strength: ConfettiStrength }) {
     log(false, 'shootConfetti');
 
     canvas.app.ticker.add(this.render, this);
 
+    const commonConfettiParticleProperties = {
+      amount: 100,
+      velocity: 2000,
+      sourceY: this.canvas.height(),
+    };
+
+    switch (strength) {
+      case ConfettiStrength.high:
+        commonConfettiParticleProperties.amount = 200;
+        commonConfettiParticleProperties.velocity = 3000;
+        break;
+      case ConfettiStrength.low:
+        commonConfettiParticleProperties.amount = 50;
+        commonConfettiParticleProperties.velocity = 1000;
+        break;
+      default:
+        break;
+    }
+
     // bottom left
     this.addConfettiParticles({
-      amount: 10,
+      ...commonConfettiParticleProperties,
       angle: -80,
-      velocity: 1000,
       sourceX: 0,
-      sourceY: this.canvas.height(),
     });
 
     // bottom right
     this.addConfettiParticles({
-      amount: 10,
+      ...commonConfettiParticleProperties,
       angle: -100,
-      velocity: 1000,
       sourceX: this.canvas.width(),
-      sourceY: this.canvas.height(),
     });
   }
 }
