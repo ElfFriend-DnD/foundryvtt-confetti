@@ -9,6 +9,17 @@ const DECAY = 4;
 const SPREAD = 50;
 const GRAVITY = 1200;
 
+export interface ShootConfettiProps {
+  amount: number;
+  velocity: number;
+}
+
+interface AddConfettiParticleProps extends ShootConfettiProps {
+  angle: number;
+  sourceX: number;
+  sourceY: number;
+}
+
 type Sprite = {
   angle: number;
   velocity: number;
@@ -29,7 +40,7 @@ export enum ConfettiStrength {
 }
 
 /**
- * Stolen right from Dice so Nice
+ * Stolen right from Dice so Nice and butchered
  * https://gitlab.com/riccisi/foundryvtt-dice-so-nice/-/blob/master/module/main.js
  * Main class to handle ~~3D Dice~~ Confetti animations.
  */
@@ -55,12 +66,18 @@ export class Confetti {
    * Create and initialize a new Confetti.
    */
   constructor() {
-    Hooks.call(`${MODULE_ID}Init`, this);
     this.dpr = canvas.app.renderer.resolution ?? window.devicePixelRatio ?? 1;
 
     this._buildCanvas();
     this._initListeners();
     this.confettiSprites = {};
+
+    window[MODULE_ID] = {
+      handleShootConfetti: this.handleShootConfetti,
+      shootConfetti: this.shootConfetti,
+      getShootConfettiProps: Confetti.getShootConfettiProps,
+    };
+    Hooks.call(`${MODULE_ID}Ready`, this);
   }
 
   /**
@@ -107,26 +124,15 @@ export class Confetti {
    * @private
    */
   _initListeners() {
-    game.socket.on(`module.${MODULE_ID}`, (request) => {
-      // if (!request.users || request.users.includes(game.user.id)) {
-      //     this.show(request.data, game.users.get(request.user));
-      // }
+    game.socket.on(`module.${MODULE_ID}`, (request: { data: ShootConfettiProps }) => {
+      log(false, 'got socket connection', {
+        request,
+      });
+      this.handleShootConfetti(request.data);
     });
   }
 
-  addConfettiParticles({
-    amount,
-    angle,
-    velocity,
-    sourceX,
-    sourceY,
-  }: {
-    amount: number;
-    angle: number;
-    velocity: number;
-    sourceX: number;
-    sourceY: number;
-  }) {
+  addConfettiParticles({ amount, angle, velocity, sourceX, sourceY }: AddConfettiParticleProps) {
     log(false, {});
     let i = 0;
     while (i < amount) {
@@ -263,44 +269,74 @@ export class Confetti {
   }
 
   /**
-   * use canvas.app.ticker instance from PIXI instead of our own requestAnimationFrame
+   * Get ShootConfettiProps from strength
+   * @param {(1|2|3)} strength
    */
-  shootConfetti({ strength }: { strength: ConfettiStrength }) {
-    log(false, 'shootConfetti');
-
-    canvas.app.ticker.add(this.render, this);
-
-    const commonConfettiParticleProperties = {
+  static getShootConfettiProps(strength: ConfettiStrength): ShootConfettiProps {
+    const shootConfettiProps: ShootConfettiProps = {
       amount: 100,
       velocity: 2000,
-      sourceY: this.canvas.height(),
     };
 
     switch (strength) {
       case ConfettiStrength.high:
-        commonConfettiParticleProperties.amount = 200;
-        commonConfettiParticleProperties.velocity = 3000;
+        shootConfettiProps.amount = 200;
+        shootConfettiProps.velocity = 3000;
         break;
       case ConfettiStrength.low:
-        commonConfettiParticleProperties.amount = 50;
-        commonConfettiParticleProperties.velocity = 1000;
+        shootConfettiProps.amount = 50;
+        shootConfettiProps.velocity = 1000;
         break;
       default:
         break;
     }
 
+    return shootConfettiProps;
+  }
+
+  /**
+   * Fires Confetti on the Local instance of Confetti
+   * @param {ShootConfettiProps} shootConfettiProps
+   */
+  handleShootConfetti(shootConfettiProps: ShootConfettiProps) {
+    log(false, 'handleShootConfetti', {
+      shootConfettiProps,
+      ticker: canvas.app.ticker.count,
+    });
+
+    canvas.app.ticker.add(this.render, this);
+
     // bottom left
     this.addConfettiParticles({
-      ...commonConfettiParticleProperties,
+      ...shootConfettiProps,
       angle: -80,
       sourceX: 0,
+      sourceY: this.canvas.height(),
     });
 
     // bottom right
     this.addConfettiParticles({
-      ...commonConfettiParticleProperties,
+      ...shootConfettiProps,
       angle: -100,
       sourceX: this.canvas.width(),
+      sourceY: this.canvas.height(),
     });
+  }
+
+  /**
+   * Emit a socket message to all users with the ShootConfettiProps
+   * @param {ShootConfettiProps} shootConfettiProps
+   */
+  shootConfetti(shootConfettiProps: ShootConfettiProps) {
+    const socketProps = { data: shootConfettiProps };
+
+    log(false, 'shootConfetti, emitting socket', {
+      shootConfettiProps,
+      socketProps,
+    });
+
+    this.handleShootConfetti(socketProps.data);
+
+    game.socket.emit(`module.${MODULE_ID}`, socketProps);
   }
 }

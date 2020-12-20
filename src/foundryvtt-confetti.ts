@@ -2,7 +2,7 @@
 import { MODULE_ABBREV, MODULE_ID, MySettings, TEMPLATES } from './module/constants';
 import { registerSettings } from './module/settings.js';
 import { log } from './module/helpers';
-import { Confetti, ConfettiStrength } from './module/classes/Confetti';
+import { Confetti, ConfettiStrength, ShootConfettiProps } from './module/classes/Confetti';
 
 let confettiInstance: Confetti | undefined;
 
@@ -56,15 +56,16 @@ async function _addConfettiButtons(html: JQuery<HTMLElement>) {
   gmScreenButton.on('click', (event) => {
     event.preventDefault();
 
-    const strength = event.currentTarget.dataset.strength;
-
-    confettiInstance.shootConfetti({
-      strength: ConfettiStrength[strength],
-    });
+    // convert to api.
+    const strength = ConfettiStrength[event.currentTarget.dataset.strength];
 
     log(false, 'Confetti Time', {
       strength,
     });
+
+    const shootConfettiProps = Confetti.getShootConfettiProps(strength);
+
+    confettiInstance.shootConfetti(shootConfettiProps);
   });
 }
 

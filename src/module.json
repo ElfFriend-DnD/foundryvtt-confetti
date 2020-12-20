@@ -11,12 +11,8 @@
       "url": "https://github.com/ElfFriend-DnD"
     }
   ],
-  "esmodules": [
-    "foundryvtt-confetti.js"
-  ],
-  "styles": [
-    "foundryvtt-confetti.css"
-  ],
+  "esmodules": ["foundryvtt-confetti.js"],
+  "styles": ["foundryvtt-confetti.css"],
   "languages": [
     {
       "lang": "en",
@@ -26,6 +22,7 @@
   ],
   "minimumCoreVersion": "0.7.9",
   "compatibleCoreVersion": "0.7.9",
+  "socket": true,
   "media": [
     {
       "type": "cover",
