@@ -10,7 +10,7 @@
     "ecmaVersion": 2020,
     "sourceType": "module"
   },
-  "extends": ["plugin:@typescript-eslint/recommended"],
+  "extends": ["plugin:@typescript-eslint/recommended", "./node_modules/@typhonjs-fvtt/eslint-foundry.js/config/latest/.eslintrc"],
   "rules": {
     "no-underscore-dangle": "off",
     "import/extensions": "off",
@@ -19,6 +19,8 @@
       {
         "exceptMethods": ["getData", "_updateObject"]
       }
-    ]
+    ],
+    "no-shadow": "off",
+    "@typescript-eslint/no-shadow": ["error", { "builtinGlobals": true, "hoist": "all", "allow": ["event"] }]
   }
 }
