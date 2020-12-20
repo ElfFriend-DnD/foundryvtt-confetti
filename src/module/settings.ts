@@ -2,8 +2,8 @@ import { MODULE_ABBREV, MODULE_ID, MySettings } from './constants';
 
 export const registerSettings = function () {
   // Debug use
-  CONFIG[MODULE_ID] = { debug: true };
-  CONFIG.debug.hooks = true;
+  CONFIG[MODULE_ID] = { debug: false };
+  // CONFIG.debug.hooks = true;
 
   // Register any custom module settings here
   game.settings.register(MODULE_ID, MySettings.GmOnly, {
