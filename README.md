@@ -10,7 +10,8 @@ Everyone loves Confetti.
 
 ## TO DO
 - [x] Create buttons on the UI for the Confetti
-- [ ] Create confetti effects (GSAP)
+- [x] Add our own canvas for GSAP Confetti -- Steal from DSN
+- [x] Create confetti effects (GSAP)
   - Objective: Two blasts of confetti from the bottom left and right corners of the screen, three levels of "blast" and sound: Low, Med, High.
 - [ ] Add a sound effect to the confetti effects
 - [ ] Hook up a socket to trigger the effect on all clients

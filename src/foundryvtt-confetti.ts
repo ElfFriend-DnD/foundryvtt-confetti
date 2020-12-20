@@ -3,6 +3,9 @@
 import { MODULE_ABBREV, MODULE_ID, MySettings, TEMPLATES } from './module/constants';
 import { registerSettings } from './module/settings.js';
 import { log } from './module/helpers';
+import { Confetti } from './module/classes/Confetti';
+
+let confettiInstance: Confetti | undefined;
 
 /* ------------------------------------ */
 /* Initialize module					*/
@@ -33,7 +36,8 @@ Hooks.once('setup', function() {
 /* When ready							*/
 /* ------------------------------------ */
 Hooks.once('ready', function() {
-	// Do anything once the module is ready
+  // Do anything once the module is ready
+  confettiInstance = new Confetti();
 });
 
 
@@ -55,6 +59,8 @@ async function _addConfettiButtons(html: JQuery<HTMLElement>) {
     event.preventDefault();
 
     const action = event.currentTarget.dataset.action
+
+    confettiInstance.shootConfetti();
 
     log(false, "Confetti Time", {
       action
