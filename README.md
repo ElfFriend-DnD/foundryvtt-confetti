@@ -14,8 +14,8 @@ Everyone loves Confetti.
 - [x] Create confetti effects (GSAP)
   - Objective: Two blasts of confetti from the bottom left and right corners of the screen, three levels of "blast" and sound: Low, Med, High.
 - [x] Hook up a socket to trigger the effect on all clients
-- [ ] Add a sound effect to the confetti effects
-- [ ] Add an API to window so other modules can trigger confetti effects
+- [x] Add a sound effect to the confetti effects
+- [x] Add an API to window so other modules can trigger confetti effects
 - [ ] Add some configuration effects to prevent crashing potato computers
 - [ ] Documentation including JSDoc on stuff
 
@@ -47,6 +47,7 @@ Its confetti! What do you mean it got everywhere and is messing something up? Wh
 - This module does not, in fact, exist yet.
 
 ## Acknowledgements
+Sound Effects from [Zapsplat.com](https://www.zapsplat.com/).
 
 This was created in a caffiene induced frenzy during the D20 Day 2020 hackathon put on by the [League of Extraordinary FoundryVTT Developers](https://forums.forge-vtt.com/c/package-development/11).
 

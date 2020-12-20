@@ -1,8 +1,8 @@
 // Import TypeScript modules
-import { MODULE_ABBREV, MODULE_ID, MySettings, TEMPLATES } from './module/constants';
+import { MODULE_ABBREV, MODULE_ID, MySettings, TEMPLATES, ConfettiStrength } from './module/constants';
 import { registerSettings } from './module/settings.js';
 import { log } from './module/helpers';
-import { Confetti, ConfettiStrength, ShootConfettiProps } from './module/classes/Confetti';
+import { Confetti, ShootConfettiProps } from './module/classes/Confetti';
 
 let confettiInstance: Confetti | undefined;
 

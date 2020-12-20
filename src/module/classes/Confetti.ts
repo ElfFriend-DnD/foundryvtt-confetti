@@ -1,4 +1,4 @@
-import { MODULE_ID } from '../constants';
+import { ConfettiStrength, MODULE_ID, SOUNDS } from '../constants';
 import { log, random } from '../helpers';
 //@ts-ignore
 import { gsap, TweenLite, Power4, Physics2DPlugin } from '/scripts/greensock/esm/all.js';
@@ -12,6 +12,7 @@ const GRAVITY = 1200;
 export interface ShootConfettiProps {
   amount: number;
   velocity: number;
+  sound: string;
 }
 
 interface AddConfettiParticleProps extends ShootConfettiProps {
@@ -32,12 +33,6 @@ type Sprite = {
   tiltAngleIncremental: number;
   tiltAngle: number;
 };
-
-export enum ConfettiStrength {
-  'low' = 0,
-  'med' = 1,
-  'high' = 2,
-}
 
 /**
  * Stolen right from Dice so Nice and butchered
@@ -72,12 +67,28 @@ export class Confetti {
     this._initListeners();
     this.confettiSprites = {};
 
+    game.audio.pending.push(this._preloadSounds.bind(this));
+
     window[MODULE_ID] = {
       handleShootConfetti: this.handleShootConfetti,
       shootConfetti: this.shootConfetti,
       getShootConfettiProps: Confetti.getShootConfettiProps,
     };
     Hooks.call(`${MODULE_ID}Ready`, this);
+  }
+
+  _preloadSounds() {
+    return Object.values(SOUNDS).map((soundPath) => () =>
+      AudioHelper.play(
+        {
+          src: soundPath,
+          autoplay: false,
+          volume: 0,
+          loop: false,
+        },
+        false
+      )
+    );
   }
 
   /**
@@ -276,6 +287,7 @@ export class Confetti {
     const shootConfettiProps: ShootConfettiProps = {
       amount: 100,
       velocity: 2000,
+      sound: SOUNDS[strength],
     };
 
     switch (strength) {
@@ -291,6 +303,11 @@ export class Confetti {
         break;
     }
 
+    log(false, 'getShootConfettiProps returned', {
+      strength,
+      shootConfettiProps,
+    });
+
     return shootConfettiProps;
   }
 
@@ -305,6 +322,8 @@ export class Confetti {
     });
 
     canvas.app.ticker.add(this.render, this);
+
+    AudioHelper.play({ src: shootConfettiProps.sound, volume: 0.8, autoplay: true, loop: false }, true);
 
     // bottom left
     this.addConfettiParticles({
