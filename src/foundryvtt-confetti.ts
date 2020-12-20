@@ -36,4 +36,32 @@ Hooks.once('ready', function() {
 	// Do anything once the module is ready
 });
 
-// Add any additional hooks if necessary
+
+/**
+ * Add confetti buttons after the chat-form element.
+ * 
+ * @param html 
+ */
+async function _addConfettiButtons(html: JQuery<HTMLElement>) {
+  const chatForm = html.find('#chat-form');
+
+  const gmScreenButtonHtml = await renderTemplate(TEMPLATES.buttons, {});
+
+  chatForm.after(gmScreenButtonHtml);
+
+  const gmScreenButton = html.find('.confetti-buttons > button');
+
+  gmScreenButton.on('click', (event) => {
+    event.preventDefault();
+
+    const action = event.currentTarget.dataset.action
+
+    log(false, "Confetti Time", {
+      action
+    });
+  });
+}
+
+Hooks.on('renderChatLog', (app: any, html: JQuery<HTMLElement>) => {
+  _addConfettiButtons(html);
+});

@@ -1,0 +1,8 @@
+@import './styles/variables.scss';
+@import './styles/mixins.scss';
+
+.confetti-buttons {
+  @include spaced;
+  
+  flex: 0 0 auto;
+}
