@@ -147,8 +147,8 @@ export class Confetti {
     // set all the heights and widths
     this.confettiCanvas.width(window.innerWidth + 'px');
     this.confettiCanvas.height(window.innerHeight - 1 + 'px');
-    this.confettiCanvas[0].width = width * this.dpr;
-    this.confettiCanvas[0].height = height * this.dpr;
+    this.confettiCanvas[0].width = width;
+    this.confettiCanvas[0].height = height;
   }
 
   _resizeEnd() {
@@ -297,7 +297,7 @@ export class Confetti {
       amount: amount * confettiMultiplier,
       angle: -70,
       sourceX: 0,
-      sourceY: this.confettiCanvas.height(),
+      sourceY: this.confettiCanvas[0].height,
       ...shootConfettiProps,
     });
 
@@ -305,8 +305,8 @@ export class Confetti {
     this.addConfettiParticles({
       amount: amount * confettiMultiplier,
       angle: -110,
-      sourceX: this.confettiCanvas.width() - $('#sidebar').width(),
-      sourceY: this.confettiCanvas.height(),
+      sourceX: this.confettiCanvas[0].width - $('#sidebar').width()*this.dpr,
+      sourceY: this.confettiCanvas[0].height,
       ...shootConfettiProps,
     });
   }
