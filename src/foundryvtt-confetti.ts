@@ -75,7 +75,7 @@ async function _addConfettiButtons(html: JQuery<HTMLElement>) {
 
 Hooks.on('renderChatLog', (app: any, html: JQuery<HTMLElement>) => {
   const gmOnly = game.settings.get(MODULE_ID, MySettings.GmOnly);
-  if (gmOnly && game.user.isGM) {
+  if (!gmOnly || game.user.isGM) {
     _addConfettiButtons(html);
   }
 });
