@@ -1,7 +1,7 @@
 import { ConfettiStrength, MODULE_ID, MySettings, SOUNDS } from '../constants';
 import { log, random } from '../helpers';
 //@ts-ignore
-import { gsap, TweenLite, Power4, Physics2DPlugin } from '/scripts/greensock/esm/all.js';
+import { gsap, TweenLite, Power4, Physics2DPlugin } from '../../../../scripts/greensock/esm/all.js';
 //@ts-ignore
 gsap.registerPlugin(Physics2DPlugin);
 
