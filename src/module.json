@@ -12,6 +12,7 @@
 		}
 	],
 	"esmodules": [
+		"greensock/esm/all.js",
 		"foundryvtt-confetti.js"
 	],
 	"styles": [
