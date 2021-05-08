@@ -2,7 +2,7 @@
 	"name": "confetti",
 	"title": "Confetti",
 	"description": "Everyone loves confetti.",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"author": "Andrew Krigline (akrigline)",
 	"authors": [
 		{
@@ -57,7 +57,7 @@
 	],
 	"bugs": "https://github.com/ElfFriend-DnD/foundryvtt-confetti/issues",
 	"changelog": "https://github.com/ElfFriend-DnD/foundryvtt-confetti/releases",
-	"download": "https://github.com/ElfFriend-DnD/foundryvtt-confetti/releases/download/v1.0.3/module.zip",
+	"download": "https://github.com/ElfFriend-DnD/foundryvtt-confetti/releases/download/v1.0.4/module.zip",
 	"manifest": "https://github.com/ElfFriend-DnD/foundryvtt-confetti/releases/latest/download/module.json",
 	"readme": "https://raw.githubusercontent.com/ElfFriend-DnD/foundryvtt-confetti/main/README.md",
 	"url": "https://github.com/ElfFriend-DnD/foundryvtt-confetti"
