@@ -33,4 +33,23 @@ export const registerSettings = function () {
     config: true,
     hint: `${MODULE_ABBREV}.settings.${MySettings.Mute}.Hint`,
   });
+
+  game.settings.register(MODULE_ID, MySettings.RapidFireLimit, {
+    name: `${MODULE_ABBREV}.settings.${MySettings.RapidFireLimit}.Name`,
+    default: 5,
+    range: { min: 0, max: 10, step: 1 },
+    type: Number,
+    scope: 'client',
+    config: true,
+    hint: `${MODULE_ABBREV}.settings.${MySettings.RapidFireLimit}.Hint`,
+  });
+
+  game.settings.register(MODULE_ID, MySettings.ShowButton, {
+    name: `${MODULE_ABBREV}.settings.${MySettings.ShowButton}.Name`,
+    default: true,
+    type: Boolean,
+    scope: 'client',
+    config: true,
+    hint: `${MODULE_ABBREV}.settings.${MySettings.ShowButton}.Hint`,
+  });
 };

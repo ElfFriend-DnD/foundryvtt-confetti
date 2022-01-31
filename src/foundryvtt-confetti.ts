@@ -80,7 +80,8 @@ Hooks.on('renderChatLog', (app: any, html: JQuery<HTMLElement>) => {
   }
 
   const gmOnly = game.settings.get(MODULE_ID, MySettings.GmOnly);
-  if (!gmOnly || game.user.isGM) {
+  const showButton = game.settings.get(MODULE_ID, MySettings.ShowButton);
+  if (showButton && (!gmOnly || game.user.isGM)) {
     _addConfettiButtons(html);
   }
 });
