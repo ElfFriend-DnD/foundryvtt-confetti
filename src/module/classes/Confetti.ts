@@ -46,6 +46,7 @@ export class Confetti {
   dpr: number;
   _rtime: Date; // used to keep track of resize
   _timeout: boolean; // used in resize
+  _lastShot: Date; // used to prevent rapid fire
 
   /**
    * Create and initialize a new Confetti.
@@ -56,6 +57,7 @@ export class Confetti {
     this._buildCanvas();
     this._initListeners();
     this.confettiSprites = {};
+    this._lastShot = new Date();
 
     game.audio.pending.push(this._preloadSounds.bind(this));
 
@@ -100,7 +102,7 @@ export class Confetti {
    * @private
    */
   _initListeners() {
-    game.socket.on(`module.${MODULE_ID}`, (request: { data: ShootConfettiProps }) => {
+    (game.socket as any).on(`module.${MODULE_ID}`, (request: { data: ShootConfettiProps }) => {
       log(false, 'got socket connection', {
         request,
       });
@@ -334,6 +336,15 @@ export class Confetti {
   shootConfetti(shootConfettiProps: ShootConfettiProps) {
     const socketProps = { data: shootConfettiProps };
 
+    const now = new Date();
+    const rapidFireLimit = game.settings.get(MODULE_ID, MySettings.RapidFireLimit);
+    if (rapidFireLimit && (this._lastShot.getTime() + rapidFireLimit * 1000 > now.getTime())) {
+      log(false, 'shootConfetti prevented by rapid fire setting');
+      return;
+    } else {
+      this._lastShot = now;
+    }
+
     log(false, 'shootConfetti, emitting socket', {
       shootConfettiProps,
       socketProps,
@@ -341,7 +352,7 @@ export class Confetti {
 
     this.handleShootConfetti(socketProps.data);
 
-    game.socket.emit(`module.${MODULE_ID}`, socketProps);
+    (game.socket as any).emit(`module.${MODULE_ID}`, socketProps);
   }
 
   /**

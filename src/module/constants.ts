@@ -21,6 +21,8 @@ export enum MySettings {
   GmOnly = 'gm-only',
   ConfettiMultiplier = 'confetti-multiplier',
   Mute = 'mute',
+  RapidFireLimit = 'rapid-fire-limit',
+  ShowButton = 'show-button',
 }
 
 export enum MyFlags {}
